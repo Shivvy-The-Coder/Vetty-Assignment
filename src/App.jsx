@@ -1,20 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "./Components/Navbar/Navbar";
-import Card from "./Components/Cards/Cards.jsx";
+import Card from "./Components/Cards/Cards";
 import { v4 as uuidv4 } from "uuid";
 
 const App = () => {
-  const [lists, setLists] = useState([]);
-  const [newListTitle, setNewListTitle] = useState(""); // Track new list title
-  const [showInput, setShowInput] = useState(false); // Show/Hide input field
+  const [lists, setLists] = useState(() => {
+    const savedLists = localStorage.getItem("lists");
+    return savedLists ? JSON.parse(savedLists) : [];
+  });
+  const [newListTitle, setNewListTitle] = useState("");
+  const [showInput, setShowInput] = useState(false);
 
-  // Function to add a new list
+  useEffect(() => {
+    localStorage.setItem("lists", JSON.stringify(lists));
+  }, [lists]);
+
   const addList = () => {
     setShowInput(true);
   };
 
   const handleAddList = () => {
-    if (!newListTitle.trim()) return; // Prevent empty lists
+    if (!newListTitle.trim()) return;
 
     const newList = {
       id: uuidv4(),
@@ -22,21 +28,26 @@ const App = () => {
       cards: [],
     };
     setLists([...lists, newList]);
-    setNewListTitle(""); // Clear input after adding
-    setShowInput(false); // Hide input
+    setNewListTitle("");
+    setShowInput(false);
   };
 
   const deleteList = (listId) => {
     setLists(lists.filter((list) => list.id !== listId));
   };
 
-  const addCard = (listId, cardTitle, cardDesc) => {
-    if (!cardTitle.trim() || !cardDesc.trim()) return; // Prevent empty input
+  const addCard = (listId, cardTitle, cardDesc, timestamp) => {
+    if (!cardTitle.trim() || !cardDesc.trim()) return;
 
-    const newCard = { id: uuidv4(), header: cardTitle, desc: cardDesc };
+    const newCard = {
+      id: uuidv4(),
+      header: cardTitle,
+      desc: cardDesc,
+      timestamp,
+    };
     setLists(
       lists.map((list) =>
-        list.id === listId ? { ...list, cards: [...list.cards, newCard] } : list
+        list.id === listId ? { ...list, cards: [newCard, ...list.cards] } : list
       )
     );
   };
@@ -65,7 +76,6 @@ const App = () => {
           />
         ))}
 
-        {/* Show input field when adding a new list */}
         {showInput && (
           <div className="border p-4 w-[200px]">
             <input
@@ -90,3 +100,4 @@ const App = () => {
 };
 
 export default App;
+
