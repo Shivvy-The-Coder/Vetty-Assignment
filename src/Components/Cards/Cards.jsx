@@ -26,7 +26,7 @@ const Card = ({ list, deleteList, addCard, deleteCard }) => {
   };
 
   return (
-    <div className="border p-4 w-[300px] m-3 bg-white/10 backdrop-blur-lg rounded-lg shadow-md  border border-white/20">
+    <div className="border p-4 w-[300px] m-3 bg-white/30 backdrop-blur-lg rounded-lg shadow-md  border border-white/20">
       <div className="flex justify-between items-center bg-blue-500 rounded-sm border">
         <div className="text-center mx-auto text-white">
           <strong>{list.title}</strong>
